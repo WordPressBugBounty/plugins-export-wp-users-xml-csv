@@ -2,7 +2,7 @@
 Contributors: soflyy, wpallimport
 Requires at least: 5.2
 Tested up to: 6.6
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 7.0
 Tags: export user, export users, user export, export users to csv, export users to xml, export users to excel, export user to csv, export user to xml, export user to excel, wordpress, export, user
 
@@ -129,11 +129,11 @@ We have been answering hundreds of support requests per week for years. Whatever
 E-mail: support@wpallimport.com
 
 = Related Plugins =
-[Export any WordPress data to XML/CSV](https://wordpress.org/plugins/wp-all-export/)  
-[Import any XML or CSV File to WordPress](https://wordpress.org/plugins/wp-all-import/)  
-[Import Products from any XML or CSV to WooCommerce](https://wordpress.org/plugins/woocommerce-xml-csv-product-import/)  
-[Export Products to CSV/XML for WooCommerce](https://wordpress.org/plugins/product-export-for-woocommerce/)  
-[Custom Product Tabs Add-on](https://wordpress.org/plugins/custom-product-tabs-wp-all-import-add-on/)  
+[Export any WordPress data to XML/CSV](https://wordpress.org/plugins/wp-all-export/)
+[Import any XML or CSV File to WordPress](https://wordpress.org/plugins/wp-all-import/)
+[Import Products from any XML or CSV to WooCommerce](https://wordpress.org/plugins/woocommerce-xml-csv-product-import/)
+[Export Products to CSV/XML for WooCommerce](https://wordpress.org/plugins/product-export-for-woocommerce/)
+[Custom Product Tabs Add-on](https://wordpress.org/plugins/custom-product-tabs-wp-all-import-add-on/)
 [Export Orders to CSV/XML for WooCommerce](https://wordpress.org/plugins/order-export-for-woocommerce/)
 
 == Installation ==
@@ -221,6 +221,9 @@ Premium users can just email their technical questions to our support staff, who
 9. Export Users Confirm and Run
 
 == Changelog ==
+
+= 1.0.1 =
+* bug fix: resolve various PHP notices
 
 = 1.0.0 =
 * Initial release on WordPress.org.

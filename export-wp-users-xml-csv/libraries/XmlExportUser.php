@@ -211,7 +211,7 @@ if (!class_exists('XmlExportUser')) {
             if (self::$is_export_shop_customer) {
                 $customer_data = array(
                     'address' => array(
-                        'title' => __("Address", "wp_all_export_plugin"),
+                        'title' => esc_html__("Address", "wp_all_export_plugin"),
                         'content' => 'address_fields'
                     )
                 );
@@ -220,7 +220,7 @@ if (!class_exists('XmlExportUser')) {
             } elseif (self::$is_woo_custom_founded) {
                 $customer_data = array(
                     'customer' => array(
-                        'title' => __("Address", "wp_all_export_plugin"),
+                        'title' => esc_html__("Address", "wp_all_export_plugin"),
                         'content' => 'customer_fields'
                     )
                 );
@@ -315,7 +315,7 @@ if (!class_exists('XmlExportUser')) {
 
             $main_fields = array(
                 array(
-                    'name' => __('Customer User ID', 'wp_all_export_plugin'),
+                    'name' => esc_html__('Customer User ID', 'wp_all_export_plugin'),
                     'label' => '_customer_user',
                     'type' => 'cf'
                 )
@@ -368,11 +368,11 @@ if (!class_exists('XmlExportUser')) {
 
                 if (strpos($key1, $keyword) !== false) {
                     $key1 = str_replace($keyword, '', $key1);
-                    $key2 = ' (' . __($keyword, 'wp_all_export_plugin') . ')';
+                    $key2 = ' (' . esc_html__($keyword, 'wp_all_export_plugin') . ')';
                 }
 
                 $data[] = array(
-                    'name' => __(trim($key1), 'woocommerce') . $key2,
+                    'name' => esc_html__(trim($key1), 'woocommerce') . $key2,
                     'label' => $key,
                     'type' => 'cf'
                 );

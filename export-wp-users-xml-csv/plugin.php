@@ -3,7 +3,7 @@
 Plugin Name: WP All Export - User Export Add-On
 Plugin URI: http://www.wpallimport.com/tour/export-wordpress-users/?utm_source=export-users-addon-free&utm_medium=wp-plugins-page&utm_campaign=upgrade-to-pro
 Description: Export Users from WordPress. Requires WP All Export.
-Version: 1.0.0
+Version: 1.0.1
 Author: Soflyy
 */
 /**
@@ -24,7 +24,7 @@ define('PMUE_ROOT_URL', rtrim(plugin_dir_url(__FILE__), '/'));
  */
 define('PMUE_PREFIX', 'pmue_');
 
-define('PMUE_VERSION', '1.0.0');
+define('PMUE_VERSION', '1.0.1');
 
 if ( class_exists('PMUE_Plugin') and PMUE_EDITION != "free"){
 
@@ -32,7 +32,7 @@ if ( class_exists('PMUE_Plugin') and PMUE_EDITION != "free"){
 		
 		?>
 		<div class="error"><p>
-			<?php printf(__('Please de-activate and remove the free version of the User Add-On before activating the paid version.', 'wp_all_import_user_add_on'));
+			<?php printf(esc_html__('Please de-activate and remove the free version of the User Add-On before activating the paid version.', 'wp_all_import_user_add_on'));
 			?>
 		</p></div>
 		<?php				
@@ -155,7 +155,6 @@ else {
 			$autoloader->init();
 
 			// register admin page pre-dispatcher
-			add_action('admin_init', array($this, 'adminInit'));
 			add_action('init', array($this, 'init'));
 
 		}
@@ -175,18 +174,6 @@ else {
 		public function load_plugin_textdomain() {
 			$locale = apply_filters( 'plugin_locale', get_locale(), 'wp_all_import_user_add_on' );
 			load_plugin_textdomain( 'wp_all_import_user_add_on', false, dirname( plugin_basename( __FILE__ ) ) . "/i18n/languages" );
-		}
-
-		/**
-		 * pre-dispatching logic for admin page controllers
-		 */
-		public function adminInit() {
-			$input = new PMUE_Input();
-			$adminDispatcher = new \Pmue\Common\Bootstrap\AdminDispatcher(self::PREFIX);
-			$page = strtolower($input->getpost('page', ''));
-            $action = $input->getpost('action', 'index');
-
-            $adminDispatcher->dispatch($page, $action);
 		}
 
 		/**
@@ -232,5 +219,62 @@ else {
 	}
 
 	PMUE_Plugin::getInstance();
+
+    add_action('admin_notices', function(){
+        // notify user if history folder is not writable
+        if ( ! class_exists( 'PMXE_Plugin' )) {
+            ?>
+            <div class="error"><p>
+                    <?php printf(
+                        __('<b>%s Plugin</b>: WP All Export must be installed and activated. You can download it here <a href="https://wordpress.org/plugins/wp-all-export/" target="_blank">https://wordpress.org/plugins/wp-all-export/</a>', 'pmue_plugin'),
+                        PMUE_Plugin::getInstance()->getName()
+                    ) ?>
+                </p></div>
+            <?php
+
+            deactivate_plugins(PMUE_ROOT_DIR . '/plugin.php');
+
+        }
+
+
+
+        if ( class_exists( 'PMXE_Plugin' ) && ( version_compare(PMXE_VERSION, '1.2.4') < 0 && PMXE_EDITION == 'free') ) {
+            ?>
+            <div class="error"><p>
+                    <?php echo wp_kses_post(sprintf(
+                        __('<b>%s Plugin</b>: Please update WP All Export to the latest version', 'wp_all_import_user_add_on'),
+                        PMUE_Plugin::getInstance()->getName()
+                    )) ?>
+                </p></div>
+            <?php
+
+            deactivate_plugins(PMUE_ROOT_DIR . '/plugin.php');
+        }
+
+        $input = new PMUE_Input();
+        $messages = $input->get('pmue_nt', array());
+        if ($messages) {
+            is_array($messages) or $messages = array($messages);
+            foreach ($messages as $type => $m) {
+                in_array((string)$type, array('updated', 'error')) or $type = 'updated';
+                ?>
+                <div class="<?php echo esc_attr($type) ?>"><p><?php echo wp_kses_post($m) ?></p></div>
+                <?php
+            }
+        }
+
+        if ( ! empty($_GET['type']) and $_GET['type'] == 'user'){
+            ?>
+            <script type="text/javascript">
+                (function($){$(function () {
+                    $('#toplevel_page_pmxi-admin-home').find('.wp-submenu').find('li').removeClass('current');
+                    $('#toplevel_page_pmxi-admin-home').find('.wp-submenu').find('a').removeClass('current');
+                    $('#toplevel_page_pmxi-admin-home').find('.wp-submenu').find('li').eq(2).addClass('current').find('a').addClass('current');
+                });})(jQuery);
+            </script>
+            <?php
+        }
+
+    });
 	
 }
