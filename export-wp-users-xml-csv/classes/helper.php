@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Helper class which defnes a namespace for some commonly used functions
  * 
@@ -77,6 +78,7 @@ class PMUE_Helper {
 				if ($deep) {
 					$array[$key] = self::array_prepend($element,$string,$deep);
 				} else {
+					// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_trigger_error -- Intentional warning for debugging array issues
 					trigger_error(__METHOD__ . ': array element', E_USER_WARNING);
 				}
 			} else {
@@ -134,6 +136,6 @@ class PMUE_Helper {
 			.'$#'
 			.$modifiers;
 		
-		return (boolean)preg_match($pattern, $string);
+		return (bool) preg_match($pattern, $string);
 	}
 }

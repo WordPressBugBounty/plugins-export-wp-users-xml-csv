@@ -1,4 +1,5 @@
-<?php 
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Base class for models
  * 
@@ -62,7 +63,7 @@ abstract class PMUE_Model extends ArrayObject {
 			array_unshift($args, $mtch[1]);
 			return call_user_func_array(array($this, 'getBy'), $args);
 		} else {
-			throw new Exception("Requested method " . get_class($this) . "::$method doesn't exist.");
+			throw new Exception( esc_html( "Requested method " . get_class($this) . "::$method doesn't exist." ) );
 		}
 	}
 	
@@ -77,6 +78,7 @@ abstract class PMUE_Model extends ArrayObject {
 		}
 		$this->table = $tableName;
 		if ( ! isset(self::$meta_cache[$this->table])) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is set internally, not from user input
 			$tableMeta = $this->wpdb->get_results("SHOW COLUMNS FROM $this->table", ARRAY_A);
 			$primary = array();
 			$auto_increment = false;
@@ -139,9 +141,11 @@ abstract class PMUE_Model extends ArrayObject {
 				$key = $mtch[1];
 				if (is_array($val) and (empty($mtch[2]) or 'IN' == strtoupper($mtch[4]))) {
 					$op = empty($mtch[2]) ? 'IN' : strtoupper(trim($mtch[2]));
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Field names from internal model definitions, values prepared via $wpdb->prepare()
 					$where[] = $this->wpdb->prepare("$key $op (" . implode(', ', array_fill(0, count($val), "%s")) . ")", $val);
 				} else {
 					$op = empty($mtch[2]) ? '=' : strtoupper(trim($mtch[2]));
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Field names from internal model definitions, values prepared via $wpdb->prepare()
 					$where[] = $this->wpdb->prepare("$key $op %s", $val);
 				}
 			}
@@ -189,10 +193,11 @@ abstract class PMUE_Model extends ArrayObject {
 	 * @return PMUE_Model
 	 */
 	public function truncateTable() {
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is set internally, not from user input
 		if (FALSE !== $this->wpdb->query("TRUNCATE $this->table")) {
 			return $this;
 		} else {
-			throw new Exception($this->wpdb->last_error);
+			throw new Exception( esc_html( $this->wpdb->last_error ) );
 		}
 	}
 }

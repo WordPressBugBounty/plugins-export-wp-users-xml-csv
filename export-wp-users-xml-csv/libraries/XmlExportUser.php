@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 if (!class_exists('XmlExportUser')) {
 
@@ -211,7 +212,7 @@ if (!class_exists('XmlExportUser')) {
             if (self::$is_export_shop_customer) {
                 $customer_data = array(
                     'address' => array(
-                        'title' => esc_html__("Address", "wp_all_export_plugin"),
+                        'title' => esc_html__('Address', 'export-wp-users-xml-csv'),
                         'content' => 'address_fields'
                     )
                 );
@@ -220,13 +221,14 @@ if (!class_exists('XmlExportUser')) {
             } elseif (self::$is_woo_custom_founded) {
                 $customer_data = array(
                     'customer' => array(
-                        'title' => esc_html__("Address", "wp_all_export_plugin"),
+                        'title' => esc_html__('Address', 'export-wp-users-xml-csv'),
                         'content' => 'customer_fields'
                     )
                 );
                 $available_sections = array_merge(array_slice($available_sections, 0, 1), $customer_data, array_slice($available_sections, 1));
             }
 
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Filter name follows parent plugin naming convention
             $available_sections = apply_filters('wpae_user_available_sections', $available_sections);
 
             return $available_sections;
@@ -243,6 +245,7 @@ if (!class_exists('XmlExportUser')) {
 
             global $wpdb;
             //$table_prefix = $wpdb->prefix;
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for meta key discovery, results are session-specific
             self::$meta_keys = $wpdb->get_results("SELECT DISTINCT " . $wpdb->usermeta . ".meta_key FROM $wpdb->usermeta, $wpdb->users WHERE " . $wpdb->usermeta . ".user_id = " . $wpdb->users . ".ID LIMIT 500");
 
             $user_ids = array();
@@ -256,6 +259,7 @@ if (!class_exists('XmlExportUser')) {
 
                 $address_fields = $this->available_customer_data();
 
+                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for customer detection, results are session-specific
                 $customer_users = $wpdb->get_results($wpdb->prepare("SELECT DISTINCT meta_value FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value != %s ", '_customer_user', '0'));
 
                 // detect if at least one filtered user is a WooCommerce customer
@@ -315,7 +319,7 @@ if (!class_exists('XmlExportUser')) {
 
             $main_fields = array(
                 array(
-                    'name' => esc_html__('Customer User ID', 'wp_all_export_plugin'),
+                    'name' => esc_html__('Customer User ID', 'export-wp-users-xml-csv'),
                     'label' => '_customer_user',
                     'type' => 'cf'
                 )
@@ -368,11 +372,11 @@ if (!class_exists('XmlExportUser')) {
 
                 if (strpos($key1, $keyword) !== false) {
                     $key1 = str_replace($keyword, '', $key1);
-                    $key2 = ' (' . esc_html__($keyword, 'wp_all_export_plugin') . ')';
+                    $key2 = ' (' . esc_html($keyword) . ')';
                 }
 
                 $data[] = array(
-                    'name' => esc_html__(trim($key1), 'woocommerce') . $key2,
+                    'name' => esc_html(trim($key1)) . $key2,
                     'label' => $key,
                     'type' => 'cf'
                 );
@@ -408,7 +412,7 @@ if (!class_exists('XmlExportUser')) {
             return stripos($uc_title, "width") === false ? str_ireplace(array('id', 'url', 'sku', 'wp', 'ssl'), array('ID', 'URL', 'SKU', 'WP', 'SSL'), $uc_title) : $uc_title;
         }
 
-        public static function prepare_data($user, $exportOptions, $xmlWriter = false, &$acfs, $implode_delimiter, $preview)
+        public static function prepare_data($user, $exportOptions, $xmlWriter, &$acfs, $implode_delimiter, $preview)
         {
             $combineMultipleFieldsFactory = new \Pmue\Common\CombineFields\CombineFieldsFactory();
             $combineMultipleFields = $combineMultipleFieldsFactory->create();
@@ -590,12 +594,14 @@ if (!class_exists('XmlExportUser')) {
 
                                 if (!empty($fieldSql)) {
                                     global $wpdb;
+                                    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnsupportedPlaceholder, PluginCheck.Security.DirectDB.UnescapedDBParameter -- User-defined SQL field from export configuration, placeholder replacement is intentional
                                     $val = $wpdb->get_var($wpdb->prepare(stripcslashes(str_replace("%%ID%%", "%d", $fieldSql)), $user->ID));
                                     if (!empty($fieldPhp) and !empty($fieldCode)) {
                                         // if shortcode defined
                                         if (strpos($fieldCode, '[') === 0) {
                                             $val = do_shortcode(str_replace("%%VALUE%%", $val, $fieldCode));
                                         } else {
+                                            // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found -- User-defined PHP code execution is an intentional feature for custom export processing
                                             $val = eval('return ' . stripcslashes(str_replace("%%VALUE%%", $val, $fieldCode)) . ';');
                                         }
                                     }

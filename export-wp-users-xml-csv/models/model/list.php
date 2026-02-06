@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 /**
  * Incapsulates behavior for list of database records
  * 
@@ -79,6 +80,7 @@ class PMUE_Model_List extends PMUE_Model {
 		} else {
 			$sql = "SELECT $this->what $sql";
 		}
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- SQL is built via buildWhere() which uses $wpdb->prepare()
 		$result = $this->wpdb->get_results($sql, ARRAY_A);
 		if (is_array($result)) {
 			foreach ($result as $i => $row) {
@@ -113,6 +115,7 @@ class PMUE_Model_List extends PMUE_Model {
 		if ( ! is_null($field)) {
 			$sql .= " WHERE " . $this->buildWhere($field, $value);
 		}
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- SQL is built via buildWhere() which uses $wpdb->prepare()
 		return intval($this->wpdb->get_var($sql));
 	}
 	
@@ -133,7 +136,7 @@ class PMUE_Model_List extends PMUE_Model {
 	public function convertRecords($elementClass = NULL, $includeFields = NULL) {
 		! is_null($elementClass) or $elementClass = preg_replace('%List$%', 'Record', get_class($this));
 		if ( ! is_subclass_of($elementClass, PMUE_Plugin::PREFIX . 'Model_Record')) {
-			throw new Exception("Provideded class name $elementClass must be a subclass of " . PMUE_Plugin::PREFIX . 'Model_Record');
+			throw new Exception( esc_html( "Provided class name $elementClass must be a subclass of " . PMUE_Plugin::PREFIX . 'Model_Record' ) );
 		}
 		$records = $this->exchangeArray(array());
 		foreach ($records as $r) {

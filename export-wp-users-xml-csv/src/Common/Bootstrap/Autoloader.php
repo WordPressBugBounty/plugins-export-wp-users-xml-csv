@@ -1,6 +1,7 @@
 <?php
-
 namespace Pmue\Common\Bootstrap;
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Autoloader
 {

@@ -1,10 +1,12 @@
-=== Export Users WordPress - Best WordPress User Export Plugin ===
+=== WP All Export — Export Users to CSV/Excel/XML ===
 Contributors: soflyy, wpallimport
 Requires at least: 5.2
-Tested up to: 6.8
-Stable tag: 1.0.1
+Tested up to: 6.9
+Stable tag: 1.0.2
 Requires PHP: 7.0
-Tags: export user, export users, user export, export users to csv, export users to xml, export users to excel, export user to csv, export user to xml, export user to excel, wordpress, export, user
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Tags: export users, user export, csv, excel, xml
 
 Export users to CSV, Excel, and XML for WordPress. Export users on demand or automatically on a schedule.
 
@@ -221,6 +223,9 @@ Premium users can just email their technical questions to our support staff, who
 9. Export Users Confirm and Run
 
 == Changelog ==
+
+= 1.0.2 =
+* improvement: full review to better align with the latest WordPress.org standards
 
 = 1.0.1 =
 * bug fix: resolve various PHP notices

@@ -1,9 +1,11 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 /**
  * Class FilteringUsers
  * @package Wpae\Pro\Filtering
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound -- Class extends parent plugin's FilteringBase and follows its naming convention
 class FilteringUsers extends \Wpae\Pro\Filtering\FilteringBase
 {
     /**
@@ -76,15 +78,17 @@ class FilteringUsers extends \Wpae\Pro\Filtering\FilteringBase
                         $meta_key = substr_replace($rule->element, "", $pos, strlen("cf_"));
                     }
 
+                    $meta_key_escaped = esc_sql($meta_key);
+
                     if ($rule->condition == 'is_empty'){
                         $table_alias = (count($this->queryJoin) > 0) ? 'meta' . count($this->queryJoin) : 'meta';
-                        $this->queryJoin[] = " LEFT JOIN {$this->wpdb->usermeta} AS $table_alias ON ($table_alias.user_id = {$this->wpdb->users}.ID AND $table_alias.meta_key = '$meta_key') ";
+                        $this->queryJoin[] = " LEFT JOIN {$this->wpdb->usermeta} AS $table_alias ON ($table_alias.user_id = {$this->wpdb->users}.ID AND $table_alias.meta_key = '$meta_key_escaped') ";
                         $this->queryWhere .= "$table_alias.umeta_id " . $this->parse_condition($rule);
                     }
                     else{
                         $table_alias = (count($this->queryJoin) > 0) ? 'meta' . count($this->queryJoin) : 'meta';
                         $this->queryJoin[] = " INNER JOIN {$this->wpdb->usermeta} AS $table_alias ON ( {$this->wpdb->users}.ID = $table_alias.user_id ) ";
-                        $this->queryWhere .= "$table_alias.meta_key = '$meta_key' AND $table_alias.meta_value " . $this->parse_condition($rule, false, $table_alias);
+                        $this->queryWhere .= "$table_alias.meta_key = '$meta_key_escaped' AND $table_alias.meta_value " . $this->parse_condition($rule, false, $table_alias);
                     }
                 }
                 break;
