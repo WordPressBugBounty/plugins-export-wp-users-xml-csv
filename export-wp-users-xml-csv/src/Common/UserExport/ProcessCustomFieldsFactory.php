@@ -12,7 +12,7 @@ class ProcessCustomFieldsFactory
      */
     public function create()
     {
-        if(PMUE_EDITION == 'paid') {
+        if(class_exists('\Pmue\Pro\UserExport\ProcessCustomFields')) {
             return new ProProcessCustomFields();
         } else {
             return new ProcessCustomFields();

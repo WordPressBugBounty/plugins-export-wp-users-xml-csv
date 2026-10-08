@@ -3,7 +3,7 @@
  * Plugin Name: WP All Export - User Export Add-On
  * Plugin URI: http://www.wpallimport.com/tour/export-wordpress-users/?utm_source=export-users-addon-free&utm_medium=wp-plugins-page&utm_campaign=upgrade-to-pro
  * Description: Export Users from WordPress. Requires WP All Export.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Soflyy
  * Text Domain: export-wp-users-xml-csv
  * License: GPL-2.0-or-later
@@ -11,6 +11,14 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
+// The legacy paid add-on declares this same class and constants. If it loaded first, skip
+// this plugin's bootstrap entirely so the request doesn't fatal on redeclaration. The check
+// must use a constant: PHP early-binds the class declared below at compile time, so a
+// class_exists check here would see our own class and always bail.
+if ( defined( 'PMUE_ROOT_DIR' ) ) {
+	return;
+}
 /**
  * Plugin root dir with forward slashes as directory separator regardless of actuall DIRECTORY_SEPARATOR value
  * @var string
@@ -29,29 +37,9 @@ define('PMUE_ROOT_URL', rtrim(plugin_dir_url(__FILE__), '/'));
  */
 define('PMUE_PREFIX', 'pmue_');
 
-define('PMUE_VERSION', '1.0.2');
+define('PMUE_VERSION', '1.0.3');
 
-if ( class_exists('PMUE_Plugin') and PMUE_EDITION != "free"){
-
-	function pmue_notice(){
-		
-		?>
-		<div class="error"><p>
-			<?php printf(esc_html__('Please de-activate and remove the free version of the User Add-On before activating the paid version.', 'export-wp-users-xml-csv'));
-			?>
-		</p></div>
-		<?php				
-
-		deactivate_plugins(PMUE_ROOT_DIR . '/plugin.php');
-
-	}
-
-	add_action('admin_notices', 'pmue_notice');
-
-}
-else {
-
-	define('PMUE_EDITION', 'free');
+define('PMUE_EDITION', 'free');
 
 	/**
 	 * Main plugin file, Introduces MVC pattern
@@ -276,5 +264,3 @@ else {
         }
 
     });
-	
-}

@@ -447,7 +447,7 @@ if (!class_exists('XmlExportUser')) {
                 $is_xml_export = true;
             }
 
-            if (is_array($exportOptions['ids']))
+            if (is_array($exportOptions['ids'] ?? ''))
             {
                 foreach ($exportOptions['ids'] as $ID => $value) {
                     $fieldName = apply_filters('wp_all_export_field_name', wp_all_export_parse_field_name($exportOptions['cc_name'][$ID]), XmlExportEngine::$exportID);
@@ -483,6 +483,29 @@ if (!class_exists('XmlExportUser')) {
                         $combineMultipleFields->processCombineFields($user, $acfs, $implode_delimiter, $preview, $combineMultipleFieldsValue, $article, $element_name, $fieldSnipped);
 
                     } else {
+                        // Run addons export field hooks, check if supported before running
+                        if (class_exists('\Pmue\Pro\UserExport\ProcessCustomFields') && method_exists('XmlExportEngine', 'get_addons')) {
+                            $addons = XmlExportEngine::get_addons();
+                            $addonFieldOptions = maybe_unserialize($fieldOptions);
+
+                            if (in_array($fieldType, $addons)) {
+                                $article = apply_filters(
+                                    "pmxe_{$fieldType}_addon_export_field",
+                                    $article,
+                                    $addonFieldOptions,
+                                    $exportOptions,
+                                    $ID,
+                                    $user,
+                                    $user->ID,
+                                    $xmlWriter,
+                                    $element_name,
+                                    $element_name_ns,
+                                    $fieldSnipped,
+                                    $preview
+                                );
+                            }
+                        }
+
                         switch ($fieldType) {
                             case 'id':
                                 // For ID columns make first element in lowercase for Excel export
