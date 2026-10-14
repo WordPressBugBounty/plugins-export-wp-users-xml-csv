@@ -2,7 +2,7 @@
 Contributors: soflyy, wpallimport
 Requires at least: 5.2
 Tested up to: 7.1
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 Requires PHP: 7.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -223,6 +223,9 @@ Premium users can just email their technical questions to our support staff, who
 9. Export Users Confirm and Run
 
 == Changelog ==
+
+= 1.0.4 =
+* improvement: address fields are listed with User Meta, which needs the User Export Add-On Pro, instead of exporting as empty columns
 
 = 1.0.3 =
 * improvement: compatibility with the User Export Add-On Pro

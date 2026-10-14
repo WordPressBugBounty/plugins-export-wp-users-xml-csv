@@ -189,6 +189,10 @@ if (!class_exists('XmlExportUser')) {
         public function filter_available_data($available_data)
         {
 
+            if (!self::can_export_user_meta()) {
+                return $available_data;
+            }
+
             if (self::$is_export_shop_customer) {
                 $available_data['address_fields'] = $this->available_customer_data();
             } elseif (self::$is_woo_custom_founded) {
@@ -208,6 +212,11 @@ if (!class_exists('XmlExportUser')) {
 
             unset($available_sections['cats']);
             unset($available_sections['media']);
+
+            if (!self::can_export_user_meta()) {
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Filter name follows parent plugin naming convention
+                return apply_filters('wpae_user_available_sections', $available_sections);
+            }
 
             if (self::$is_export_shop_customer) {
                 $customer_data = array(
@@ -235,6 +244,12 @@ if (!class_exists('XmlExportUser')) {
         }
 
         // [\FILTERS]
+
+        // Address fields are user meta, which only the pro layer fills; without it they stay in the locked User Meta group.
+        private static function can_export_user_meta()
+        {
+            return class_exists('\Pmue\Pro\UserExport\ProcessCustomFields');
+        }
 
         public static $meta_keys;
         public static $is_woo_custom_founded = false;
@@ -298,7 +313,7 @@ if (!class_exists('XmlExportUser')) {
                                 }
                             }
                         }
-                        if ($to_add && (self::$is_export_shop_customer || self::$is_woo_custom_founded)) {
+                        if ($to_add && self::can_export_user_meta() && (self::$is_export_shop_customer || self::$is_woo_custom_founded)) {
                             foreach ($address_fields as $address_value) {
                                 if ($meta_key->meta_key == $address_value['label']) {
                                     $to_add = false;

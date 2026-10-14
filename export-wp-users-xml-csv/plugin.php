@@ -3,7 +3,7 @@
  * Plugin Name: WP All Export - User Export Add-On
  * Plugin URI: http://www.wpallimport.com/tour/export-wordpress-users/?utm_source=export-users-addon-free&utm_medium=wp-plugins-page&utm_campaign=upgrade-to-pro
  * Description: Export Users from WordPress. Requires WP All Export.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Soflyy
  * Text Domain: export-wp-users-xml-csv
  * License: GPL-2.0-or-later
@@ -37,7 +37,7 @@ define('PMUE_ROOT_URL', rtrim(plugin_dir_url(__FILE__), '/'));
  */
 define('PMUE_PREFIX', 'pmue_');
 
-define('PMUE_VERSION', '1.0.3');
+define('PMUE_VERSION', '1.0.4');
 
 define('PMUE_EDITION', 'free');
 
